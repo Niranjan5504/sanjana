@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Game</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #2c003e;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+            color: #ffffff;
+            text-align: center;
+        }
+        
+
+        .background-video {
+            position: fixed;
+            right: 0;
+            bottom: 0;
+            min-width: 100%;
+            min-height: 100%;
+            z-index: -1;
+        }
+        .container {
+            width: 90%;
+            max-width: 600px;
+            padding: 20px;
+            background: rgba(44, 0, 62, 0.8);
+            background-size: cover;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            z-index: 1;
+        }
+        h1 {
+            color: #9855dc;
+            font-size: 24px;
+        }
+        .question {
+            margin-bottom: 20px;
+        }
+        .options div {
+            margin: 10px 0;
+            font-size: 16px;
+        }
+        button {
+            background: rgba(151, 77, 183, 0.8);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 10px 2px;
+            cursor: pointer;
+            border-radius: 5px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+        .results {
+            font-size: 18px;
+            margin-top: 20px;
+        }
+        .t {
+            font-size: 28px;
+            color:white;
+            text-shadow: 2px 2px 5px#9855dc;
+            margin-bottom: 20px;
+        }
+        .feedback {
+            margin: 10px 0;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        .next-question {
+            margin-top: 20px;
+            display: none;
+        }
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 20px;
+            }
+            button {
+                font-size: 14px;
+                padding: 8px 16px;
+            }
+            .container {
+                width: 80%; /* Reduce width for small screens */
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <video autoplay muted loop class="background-video">
+        <source src="static/videos/Jash.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+    <div class="container">
+        <h1 class="t">Quiz Game</h1>
+        {% if question %}
+            <h1 id="question-text">{{ question.question }}</h1>
+            <form id="quizForm" method="post">
+                <div class="options" id="options-container">
+                    {% for option in question.options %}
+                        <div>
+                            <input type="radio" id="{{ option }}" name="option" value="{{ option }}" required>
+                            <label for="{{ option }}">{{ option }}</label>
+                        </div>
+                    {% endfor %}
+                </div>
+                <button type="button" onclick="checkAnswer()">Submit</button>
+                <div class="feedback" id="feedback"></div>
+                <button type="button" class="next-question" id="nextQuestionBtn" onclick="nextQuestion()">Next Question</button>
+            </form>
+        {% else %}
+            <h1>Your Score: {{ score }} / {{ total_questions }}</h1>
+            <a href="{{ url_for('pong.index') }}">
+                <button>Try Again</button>
+            </a>
+        {% endif %}
+    </div>
+    <script>
+        let correctAnswer = "";
+
+        function checkAnswer() {
+            const selectedOption = document.querySelector('input[name="option"]:checked');
+            const feedback = document.getElementById('feedback');
+
+            if (!selectedOption) {
+                feedback.textContent = "Please select an answer!";
+                return;
+            }
+
+            if (selectedOption.value === correctAnswer) {
+                feedback.textContent = "Correct!";
+                feedback.style.color = "green";
+            } else {
+                feedback.textContent = `Wrong! The correct answer was: ${correctAnswer}`;
+                feedback.style.color = "red";
+            }
+
+            // Disable the form after answering
+            document.getElementById('quizForm').querySelectorAll('input[type=radio]').forEach(input => input.disabled = true);
+
+            // Show the next question button
+            document.getElementById('nextQuestionBtn').style.display = 'inline-block';
+        }
+
+        function nextQuestion() {
+            fetch('/get_next_question', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.redirect) {
+                    window.location.href = data.redirect;
+                } else {
+                    document.getElementById('question-text').textContent = data.question;
+                    const optionsContainer = document.getElementById('options-container');
+                    optionsContainer.innerHTML = '';
+                    data.options.forEach(option => {
+                        const optionHTML = `
+                            <div>
+                                <input type="radio" id="${option}" name="option" value="${option}" required>
+                                <label for="${option}">${option}</label>
+                            </div>
+                        `;
+                        optionsContainer.insertAdjacentHTML('beforeend', optionHTML);
+                    });
+
+                    document.getElementById('feedback').textContent = '';
+                    document.getElementById('nextQuestionBtn').style.display = 'none';
+                    document.getElementById('quizForm').querySelectorAll('input[type=radio]').forEach(input => input.disabled = false);
+                    
+                    // Update the correct answer for the new question
+                    correctAnswer = data.answer;
+                }
+            })
+            .catch(error => console.error('Error fetching next question:', error));
+        }
+
+        // Initialize the correct answer for the first question
+        correctAnswer = "{{ question.answer }}";
+    </script>
+</body>
+</html>

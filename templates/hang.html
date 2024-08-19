@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en">
+   <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Hangman Game</title>
+      <style>
+         /* General Styles */
+         body {
+         font-family: 'Courier New', Courier, monospace;
+         color: #d3d3e3;
+         font-weight: bolder;
+         font-size: 20px;
+         margin: 0;
+         padding: 0;
+         overflow: hidden;
+         position: relative;
+         }
+         #background-video {
+         position: fixed;
+         top: 0;
+         left: 0;
+         width: 100vw;
+         height: 100vh;
+         object-fit: cover;
+         z-index: -2;
+         }
+         #game-container {
+         background-color: rgba(31, 31, 47, 0.8);
+         border-radius: 15px;
+         padding: 20px;
+         box-shadow: 0px 0px 15px 5px rgba(128, 0, 128, 0.7);
+         text-align: center;
+         width: 90%;
+         max-width: 500px;
+         margin: 0 auto;
+         position: relative;
+         background-image: url('static/image/unnamed.jpg');
+         background-size: cover;
+         background-position: center;
+         margin-top: 50px;
+         }
+         h1 {
+         color: #a900ff;
+         font-size: 40px;
+         margin-bottom: 20px;
+         }
+         p {
+         font-size: 24px;
+         color: #d3d3e3;
+         margin: 10px 0;
+         }
+         #letter {
+         font-size: 20px;
+         padding: 8px;
+         width: 40px;
+         border: 2px solid #a900ff;
+         border-radius: 5px;
+         background-color: #333348;
+         color: #ffffff;
+         text-align: center;
+         }
+         #guess-form button,
+         #clue-btn {
+         font-size: 18px;
+         padding: 10px 15px;
+         margin-top: 30px;
+         border: none;
+         border-radius: 5px;
+         background-color: #a900ff;
+         color: #ffffff;
+         cursor: pointer;
+         transition: background-color 0.3s ease, transform 0.3s ease;
+         }
+         #guess-form button:hover,
+         #clue-btn:hover {
+         background-color: #8800cc;
+         transform: scale(1.05);
+         }
+         #clue {
+         font-size: 20px;
+         color: #e0e0ff;
+         margin-top: 20px;
+         }
+         /* Hangman Drawing Styles */
+         #hangman-container {
+         margin: 20px auto;
+         width: 200px;
+         height: 300px;
+         position: relative;
+         }
+         .gallows {
+         width: 150px;
+         height: 10px;
+         background-color: #a900ff;
+         position: absolute;
+         top: 0;
+         left: 25px;
+         }
+         .rope {
+         width: 4px;
+         height: 50px;
+         background-color: #a900ff;
+         position: absolute;
+         top: 10px;
+         left: 95px;
+         }
+         .head {
+         width: 45px;
+         height: 45px;
+         border-radius: 50%;
+         background-color: #ffffff;
+         position: absolute;
+         top: 60px;
+         left: 75px;
+         display: none;
+         }
+         .body {
+         width: 4px;
+         height: 80px;
+         background-color: #ffffff;
+         position: absolute;
+         top: 110px;
+         left: 95px;
+         display: none;
+         }
+         .arm.left-arm,
+         .arm.right-arm {
+         width: 50px;
+         height: 4px;
+         background-color: #ffffff;
+         position: absolute;
+         top: 130px;
+         display: none;
+         }
+         .arm.left-arm {
+         left: 45px;
+         transform: rotate(45deg);
+         }
+         .arm.right-arm {
+         right: 45px;
+         transform: rotate(-45deg);
+         }
+         .leg.left-leg,
+         .leg.right-leg {
+         width: 50px;
+         height: 4px;
+         background-color: #ffffff;
+         position: absolute;
+         top: 190px;
+         display: none;
+         }
+         .leg.left-leg {
+         left: 45px;
+         transform: rotate(-45deg);
+         }
+         .leg.right-leg {
+         right: 45px;
+         transform: rotate(45deg);
+         }
+         /* Game over and Win Styles */
+         #game-over-message {
+         color: white;
+         font-weight: bolder;
+         font-size: 24px;
+         margin-top: 20px;
+         }
+         #win-message {
+         color: #40ff40;
+         font-size: 24px;
+         margin-top: 20px;
+         }
+         /* Responsive Styles */
+         @media (max-width: 768px) {
+         #game-container {
+         width: 80%;
+         max-width: none;
+         padding: 15px;
+         }
+         h1 {
+         font-size: 32px;
+         }
+         p {
+         font-size: 20px;
+         }
+         #letter {
+         font-size: 18px;
+         width: 35px;
+         }
+         #guess-form button,
+         #clue-btn {
+         font-size: 16px;
+         padding: 8px 12px;
+         }
+         #clue {
+         font-size: 18px;
+         }
+         /* Hangman Drawing Styles */
+         #hangman-container {
+         margin: 20px auto;
+         width: 200px;
+         height: 300px;
+         position: relative;
+         }
+         .gallows {
+         width: 150px;
+         height: 10px;
+         background-color: #a900ff;
+         position: absolute;
+         top: 0;
+         left: 25px;
+         }
+         .rope {
+         width: 4px;
+         height: 50px;
+         background-color: #a900ff;
+         position: absolute;
+         top: 10px;
+         left: 95px;
+         }
+         .head {
+         width: 45px;
+         height: 45px;
+         border-radius: 50%;
+         background-color: #ffffff;
+         position: absolute;
+         top: 60px;
+         left: 75px;
+         display: none;
+         }
+         .body {
+         width: 4px;
+         height: 80px;
+         background-color: #ffffff;
+         position: absolute;
+         top: 110px;
+         left: 95px;
+         display: none;
+         }
+         .arm.left-arm,
+         .arm.right-arm {
+         width: 50px;
+         height: 4px;
+         background-color: #ffffff;
+         position: absolute;
+         top: 130px;
+         display: none;
+         }
+         .arm.left-arm {
+         left: 45px;
+         transform: rotate(45deg);
+         }
+         .arm.right-arm {
+         right: 45px;
+         transform: rotate(-45deg);
+         }
+         .leg.left-leg,
+         .leg.right-leg {
+         width: 50px;
+         height: 4px;
+         background-color: #ffffff;
+         position: absolute;
+         top: 190px;
+         display: none;
+         }
+         .leg.left-leg {
+         left: 45px;
+         transform: rotate(-45deg);
+         }
+         .leg.right-leg {
+         right: 45px;
+         transform: rotate(45deg);
+         }
+         }
+         @media (max-width: 480px) {
+         body {
+         font-size: 16px;
+         }
+         #game-container {
+         width: 80%;
+         padding: 10px;
+         }
+         h1 {
+         font-size: 28px;
+         }
+         p {
+         font-size: 18px;
+         }
+         #letter {
+         font-size: 16px;
+         width: 30px;
+         }
+         #guess-form button,
+         #clue-btn {
+         font-size: 14px;
+         padding: 6px 10px;
+         }
+         #clue {
+         font-size: 16px;
+         }
+         /* Hangman Drawing Styles */
+         #hangman-container {
+         margin: 20px auto;
+         width: 200px;
+         height: 300px;
+         position: relative;
+         }
+         .gallows {
+         width: 150px;
+         height: 10px;
+         background-color: #a900ff;
+         position: absolute;
+         top: 0;
+         left: 25px;
+         }
+         .rope {
+         width: 4px;
+         height: 50px;
+         background-color: #a900ff;
+         position: absolute;
+         top: 10px;
+         left: 95px;
+         }
+         .head {
+         width: 45px;
+         height: 45px;
+         border-radius: 50%;
+         background-color: #ffffff;
+         position: absolute;
+         top: 60px;
+         left: 75px;
+         display: none;
+         }
+         .body {
+         width: 4px;
+         height: 80px;
+         background-color: #ffffff;
+         position: absolute;
+         top: 110px;
+         left: 95px;
+         display: none;
+         }
+         .arm.left-arm,
+         .arm.right-arm {
+         width: 50px;
+         height: 4px;
+         background-color: #ffffff;
+         position: absolute;
+         top: 130px;
+         display: none;
+         }
+         .arm.left-arm {
+         left: 45px;
+         transform: rotate(45deg);
+         }
+         .arm.right-arm {
+         right: 45px;
+         transform: rotate(-45deg);
+         }
+         .leg.left-leg,
+         .leg.right-leg {
+         width: 50px;
+         height: 4px;
+         background-color: #ffffff;
+         position: absolute;
+         top: 190px;
+         display: none;
+         }
+         .leg.left-leg {
+         left: 45px;
+         transform: rotate(-45deg);
+         }
+         .leg.right-leg {
+         right: 45px;
+         transform: rotate(45deg);
+         }
+         }
+      </style>
+   </head>
+   <body>
+      <video id="background-video" autoplay muted loop>
+         <source src="static/videos/1.mp4" type="video/mp4">
+         Your browser does not support the video tag.
+      </video>
+      <div id="game-container">
+         <h1>HANGMAN GAME</h1>
+         <div id="hangman-container">
+            <div class="gallows"></div>
+            <div class="rope"></div>
+            <div class="head"></div>
+            <div class="body"></div>
+            <div class="arm left-arm"></div>
+            <div class="arm right-arm"></div>
+            <div class="leg left-leg"></div>
+            <div class="leg right-leg"></div>
+         </div>
+         <p id="display-word">{{ game_state.display_word }}</p>
+         <p>Guesses: {{ game_state.guesses | join(', ') }}</p>
+         <p>Attempts Left: {{ game_state.attempts_left }}</p>
+         <form id="guess-form">
+            <input type="text" id="letter" maxlength="1">
+            <button type="submit">Guess</button>
+         </form>
+         <button id="clue-btn">Get Clue</button>
+         <p id="clue"></p>
+         <p id="game-over-message" style="display: none;">Game Over! The word was: <span id="correct-word"></span></p>
+         <p id="win-message" style="display: none;">Congratulations! You won!</p>
+      </div>
+      <script>
+         const form = document.getElementById('guess-form');
+         const clueBtn = document.getElementById('clue-btn');
+         const hangmanParts = {
+             head: document.querySelector('.head'),
+             body: document.querySelector('.body'),
+             leftArm: document.querySelector('.arm.left-arm'),
+             rightArm: document.querySelector('.arm.right-arm'),
+             leftLeg: document.querySelector('.leg.left-leg'),
+             rightLeg: document.querySelector('.leg.right-leg')
+         };
+         const displayWord = document.getElementById('display-word');
+         const clueText = document.getElementById('clue');
+         const gameOverMessage = document.getElementById('game-over-message');
+         const correctWordElement = document.getElementById('correct-word');
+         const winMessage = document.getElementById('win-message');
+         
+         form.addEventListener('submit', function (e) {
+             e.preventDefault();
+             const letter = document.getElementById('letter').value;
+         
+             fetch('/guess', {
+                 method: 'POST',
+                 headers: {
+                     'Content-Type': 'application/json'
+                 },
+                 body: JSON.stringify({ letter: letter })
+             })
+             .then(response => response.json())
+             .then(data => {
+                 updateHangman(data.game_state.attempts_left);
+                 displayWord.textContent = data.game_state.display_word;
+                 document.querySelectorAll('p')[1].textContent = "Guesses: " + data.game_state.guesses.join(', ');
+                 document.querySelectorAll('p')[2].textContent = "Attempts Left: " + data.game_state.attempts_left;
+         
+                 if (data.game_state.game_over) {
+                     gameOverMessage.style.display = "block";
+                     correctWordElement.textContent = data.game_state.word;
+                 } else if (data.game_state.win) {
+                     winMessage.style.display = "block";
+                 }
+             });
+         });
+         
+         clueBtn.addEventListener('click', function () {
+             fetch('/clue')
+             .then(response => response.text())
+             .then(data => {
+                 clueText.textContent = "Clue: " + data;
+             });
+         });
+         
+         function updateHangman(attemptsLeft) {
+             const parts = Object.values(hangmanParts);
+             parts.forEach(part => part.style.display = 'none');
+             
+             if (attemptsLeft <= 5) hangmanParts.head.style.display = 'block';
+             if (attemptsLeft <= 4) hangmanParts.body.style.display = 'block';
+             if (attemptsLeft <= 3) hangmanParts.leftArm.style.display = 'block';
+             if (attemptsLeft <= 2) hangmanParts.rightArm.style.display = 'block';
+             if (attemptsLeft <= 1) hangmanParts.leftLeg.style.display = 'block';
+             if (attemptsLeft === 0) hangmanParts.rightLeg.style.display = 'block';
+         }
+      </script>
+   </body>
+</html>

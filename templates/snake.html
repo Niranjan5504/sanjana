@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+   <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Snake Game</title>
+      <style>
+         body {
+         font-family: Arial, sans-serif;
+         background-color: #000;
+         color: #fff;
+         margin: 0;
+         padding: 0;
+         overflow: hidden;
+         position: relative;
+         display: flex;
+         justify-content: center;
+         align-items: flex-start; /* Align items to the top */
+         height: 100vh;
+         }
+         #background-video {
+         position: fixed;
+         top: 0;
+         left: 0;
+         width: 100vw;
+         height: 100vh;
+         object-fit: cover;
+         z-index: -2;
+         filter: brightness(1.2); /* Increase brightness */
+         }
+         #video-overlay {
+         position: absolute;
+         top: 0;
+         left: 0;
+         width: 100vw;
+         height: 100vh;
+         background: rgba(0, 0, 0, 0.3); /* Semi-transparent overlay */
+         z-index: -1;
+         }
+         #game-container {
+         text-align: center;
+         position: relative;
+         z-index: 1;
+         width: 100%; /* Default to 100% width */
+         max-width: 800px; /* Optional: limit max width */
+         margin-top: 15px; /* Move the container down with margin */
+         }
+         #game-header {
+         text-align: center; /* Center the heading */
+         margin-bottom: 20px;
+         }
+         h1 {
+         color: #fff;
+         font-size: 48px;
+         text-shadow: 0 0 10px #a900ff, 0 0 20px #a900ff, 0 0 30px #a900ff, 0 0 40px #a900ff;
+         }
+         #game-canvas {
+         background-color: #222;
+         border: 2px solid #a900ff;
+         box-shadow: 0 0 10px #a900ff;
+         width: 100%; /* Make canvas responsive */
+         max-width: 500px; /* Optional: limit max width */
+         height: auto; /* Maintain aspect ratio */
+         }
+         #controls {
+         margin-top: 20px;
+         }
+         #controls button {
+         background-image: url('static/image/th.jpeg');
+         color: #fff;
+         border: none;
+         padding: 10px 20px;
+         margin: 5px;
+         cursor: pointer;
+         font-size: 16px;
+         border-radius: 5px;
+         box-shadow: 0 0 5px #a900ff;
+         }
+         #controls button:hover {
+         background-color: #666;
+         box-shadow: 0 0 10px #a900ff;
+         }
+         /* Responsive Styles */
+         @media (max-width: 768px) {
+         #game-container {
+         width: 80%; /* 80% width for small screens */
+         }
+         #game-header h1 {
+         font-size: 36px;
+         }
+         #controls button {
+         font-size: 14px;
+         padding: 8px 15px;
+         }
+         #game-canvas {
+         width: 100%;
+         height: auto;
+         }
+         }
+         @media (min-width: 769px) {
+         #game-container {
+         width: 100%; /* 100% width for larger screens */
+         }
+         #game-header h1 {
+         font-size: 48px;
+         }
+         #controls button {
+         font-size: 16px;
+         padding: 10px 20px;
+         }
+         #game-canvas {
+         width: 100%;
+         height: auto;
+         }
+         }
+         @media (max-width: 480px) {
+         #game-header h1 {
+         font-size: 28px;
+         }
+         #controls button {
+         font-size: 12px;
+         padding: 12px 13px;
+         }
+         #game-canvas {
+         width: 100%;
+         height: auto;
+         margin-top:200px;
+         }
+         }
+      </style>
+   </head>
+   <body>
+      <video id="background-video" autoplay muted loop>
+         <source src="static/videos/pink.mp4" type="video/mp4">
+         Your browser does not support the video tag.
+      </video>
+      <div id="video-overlay"></div>
+      <div id="game-container">
+         <div id="game-header">
+            <h1>Snake Game</h1>
+         </div>
+         <canvas id="game-canvas" width="500" height="500"></canvas>
+         <div id="controls">
+            <button onclick="move('up')">Up</button>
+            <button onclick="move('left')">Left</button>
+            <button onclick="move('down')">Down</button>
+            <button onclick="move('right')">Right</button>
+         </div>
+      </div>
+      <script>
+         const canvas = document.getElementById('game-canvas');
+         const ctx = canvas.getContext('2d');
+         const segmentSize = 20;
+         let direction = 'right';
+         
+         function startGame() {
+             setInterval(() => {
+                 moveSnake(direction);
+             }, 200); // Update every 200 milliseconds
+         }
+         
+         function move(newDirection) {
+             direction = newDirection;
+         }
+         
+         function moveSnake(direction) {
+             fetch('/update_position', {
+                 method: 'POST',
+                 headers: {
+                     'Content-Type': 'application/json'
+                 },
+                 body: JSON.stringify({ direction: direction })
+             })
+             .then(response => response.json())
+             .then(data => {
+                 updateGame(data);
+             })
+             .catch(error => console.error('Error:', error));
+         }
+         
+         function updateGame(data) {
+             const snake = data.snake;
+             const food = data.food;
+         
+             ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear the canvas
+         
+             // Draw snake segments
+             ctx.fillStyle = '#0f0'; // Bright green for the snake
+             snake.forEach(segment => {
+                 ctx.fillRect(segment[0], segment[1], segmentSize, segmentSize);
+             });
+         
+             // Draw food
+             ctx.fillStyle = '#f00'; // Bright red for the food
+             ctx.fillRect(food[0], food[1], segmentSize, segmentSize);
+         }
+         
+         window.onload = startGame;
+      </script>
+   </body>
+</html>

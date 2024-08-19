@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Jash</title>
+    <style>
+* {
+    margin: 0;
+    padding: 0;
+    font-family: 'Alfa Slab One', cursive;
+}
+
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-image: url('static/image/women.PNG');
+    background-size: cover; /* Cover the entire page */
+    background-position: center; /* Center the background image */
+    background-attachment: fixed; /* Fix the background image position */
+    background-blend-mode: overlay; /* Overlay other background properties */
+    filter: brightness(1.2); /* Increase brightness */
+    overflow-x: hidden;
+    margin: 0;
+    font-size: 16px;
+    color: #fff;
+}
+
+.container {
+    position: relative;
+    width: 1100px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    padding: 30px;
+    margin-top: 8%;
+    background: #241e35;
+    background-image: url('static/image/women.PNG'); /* Semi-transparent background to blend with image */
+    background-size: cover;
+    background-position: center;
+    box-shadow: inset 0 0 50px #2d1a60;
+    left:30px;
+}
+
+.container .card {
+    width: 308px;
+    height: 400px;
+    background: #c8acd6;
+    margin: 30px 10px;
+    padding: 20px 15px;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0.5px 10px #c8acd6;
+    transition: 0.3s ease-in-out;
+    margin-top: 5%;
+    border-radius: 0px;
+}
+
+.container .card .imgBx {
+    position: relative;
+    width: 260px;
+    height: 160px;
+    top: -60px;
+    left: 40px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 1.2);
+}
+
+.container .card .imgBx img {
+    max-width: 100%;
+    border-radius: 0px;
+}
+
+.imgBx:hover img {
+    transform: scale(1.1);
+    transition: 0.3s ease-in-out;
+}
+
+.container .card h2 {
+    margin-top: 10px;
+    color:#601a5ce6;
+}
+
+.container .card p {
+    color: #62229a;
+    margin-top: 10px;
+}
+
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 30px;
+    background: rgba(39, 29, 51, 0.3); /* Semi-transparent background */
+    color: white;
+    position: fixed;
+    width: 100%;
+    top: 0;
+    left: 0;
+    backdrop-filter: blur(10px); /* Glassmorphism effect */
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1); /* Optional: light border for definition */
+    z-index: 1000; /* Ensures navbar is on top */
+}
+
+.logo {
+    font-size: 2rem;
+    font-weight: bold;
+    margin-left: 50px;
+}
+
+.nav-links {
+    list-style: none;
+    display: none;
+}
+
+.nav-links li {
+    margin: 0 10px; /* Reduced margin between links */
+}
+
+.nav-links a {
+    color: white;
+    text-decoration: none;
+    font-size: 1.1rem;
+    transition: color 0.3s ease-in-out;
+}
+
+.nav-links a:hover {
+    color: #d4b1ff;
+}
+
+.hamburger {
+    display: none;
+    flex-direction: column;
+    cursor: pointer;
+}
+
+.hamburger span {
+    width: 25px;
+    height: 3px;
+    background: white;
+    margin: 4px 0;
+    transition: 0.3s;
+}
+
+@media screen and (max-width: 768px) {
+    .nav-links {
+        position: absolute;
+        top: 60px;
+        display: none;
+        right: 0;
+        height: 60vh; /* Reduced height */
+        width: 100%;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center; /* Centering the links */
+        background: rgba(94, 43, 158, 0.8); /* Semi-transparent dark purple */
+        transform: translateX(100%);
+        transition: transform 0.3s ease-in-out;
+    }
+
+    .nav-links.open {
+        transform: translateX(0%);
+    }
+
+    .hamburger {
+        display: flex;
+    }
+
+    .nav-links li {
+        margin: 10px 0; 
+        display: none; /* Reduced margin between links */
+    }
+}
+@media screen and (max-width: 768px) {
+    .container {
+        position: relative;
+        width:80%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-wrap: wrap;
+        padding: 40px;
+        margin-top: 20%;
+        background: #241e35; /* Semi-transparent background to blend with image */
+        background-size: cover;
+        background-position: center;
+        box-shadow: inset 0 0 50px #2d1a60;
+        left:30px;
+    }
+    .container .card {
+    width: 328px;
+    height: 400px;
+    background: #c8acd6;
+    margin: 30px 40px;
+    padding: 20px 15px;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0.5px 10px #c8acd6;
+    transition: 0.3s ease-in-out;
+    margin-top: 5%;
+    border-radius: 0px;
+}
+
+.container .card .imgBx {
+    position: relative;
+    width: 260px;
+    height: 160px;
+    top: -60px;
+    left: 40px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 1.2);
+}
+
+.container .card .imgBx img {
+    max-width: 90%;
+    border-radius: 0px;
+}
+
+.imgBx:hover img {
+    transform: scale(1.1);
+    transition: 0.3s ease-in-out;
+}
+
+.container .card h2 {
+    margin-top: 10px;
+    color:#601a5ce6;
+}
+
+.container .card p {
+    color: #62229a;
+    margin-top: 10px;
+}
+ 
+}
+
+
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">Jash</div>
+        <ul class="nav-links">
+            <li><a href="#">Home</a></li>
+            <li><a href="#">About</a></li>
+            <li><a href="#">Services</a></li>
+            <li><a href="#">Contact</a></li>
+        </ul>
+        <div class="hamburger">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </nav>
+    
+    
+    <div class="container">
+        <div class="card">
+            <div class="imgBx">
+                <a href="{{ url_for('hang.index') }}">
+                    <img src="{{ url_for('static', filename='image/5hangman.jpg') }}" alt="Hangman">
+                </a>
+                <h2>Hangman</h2>
+                <p>
+                    Hangman is a word-guessing game where players reveal a hidden word by guessing letters before the stick figure is completed.</p>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="imgBx">
+                <a href="{{ url_for('snake.index') }}">
+                    <img src="{{ url_for('static', filename='image/1snake.jpg') }}" alt="Snakegame">
+                </a>
+                <h2>Snake Game </h2>
+                <p>Steer the snake with arrow keys, eat food to grow, and avoid its tail.</p>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="imgBx">
+                <a href="{{ url_for('tic.index') }}">
+                    <img src="{{ url_for('static', filename='image/tictac.jpg') }}" alt="Tic Tac Toe">
+                </a>
+                <h2>Tic Tac Toe</h2>
+                <p>Tic-Tac-Toe is a simple strategy game where two players take turns marking Xs and Os on a 3x3 grid, aiming to align three in a row.</p>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="imgBx">
+                <a href="{{ url_for('simon.index') }}">
+                    <img src="{{ url_for('static', filename='image/simon.jpg') }}" alt="Simon Says">
+                </a>
+                <h2>Simon Says</h2>
+                <p>Simon Says is a memory game where players follow a sequence of color or sound cues to repeat the pattern correctly.</p>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="imgBx">
+                <a href="{{ url_for('rock.index') }}">
+                    <img src="{{ url_for('static', filename='image/stone.jpg') }}" alt="Rock Paper Scissor">
+                </a>
+                <h2>Rock Paper Scissors</h2>
+                <p>Rock Paper Scissors is a game where players choose between rock, paper, or scissors, with each choice beating one and losing to another.</p>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="imgBx">
+                <a href="{{ url_for('pong.index') }}">
+                    <img src="{{ url_for('static', filename='image/3pong.jpg') }}" alt="Pong game">
+                </a>
+                <h2>Quiz game</h2>
+                <p>Answer diverse questions correctly to score points and climb the leaderboard in our interactive Quiz Game.</p>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="imgBx">
+                <a href="{{ url_for('draw.index') }}">
+                    <img src="{{ url_for('static', filename='image/reaction.jpg') }}" alt="Reaction game">
+                </a>
+                <h2>Reaction game</h2>
+                <p>Quick Draw is a reaction game where players compete to quickly click a target or button in response to visual or auditory cues to measure and display their reaction time.</p>
+            </div>
+        </div>
+        
+
+        <!-- Example HTML file where you link to the piano page -->
+        <div class="card">
+            <div class="imgBx">
+                <a href="{{ url_for('piano.piano') }}"> <!-- Use 'piano.piano' to refer to the 'piano' route within the 'piano' Blueprint -->
+                    <img src="{{ url_for('static', filename='image/piano.jpg') }}" alt="Piano">
+                </a>
+                <h2>Piano</h2>
+                <p>Play melodies and explore musical notes with this interactive piano game.</p>
+            </div>
+        </div>
+
+    </div>
+</body>
+</html>

@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>Playable Piano JavaScript</title>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: 'Poppins', sans-serif;
+      }
+
+      body {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        background: #2C1F44;
+        /* Brighter dark purple background */
+        position: relative;
+        overflow: hidden;
+      }
+
+      body::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        opacity: 0.8;
+        /* Slightly reduced opacity for the overlay */
+        z-index: -1;
+      }
+
+      #background-video {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        z-index: -1;
+        filter: brightness(0.8);
+        /* Increased brightness */
+      }
+
+      .wrapper {
+        padding: 35px 40px;
+        border-radius: 20px;
+        background-image: url('static/image/vui.PNG');
+        /* Brighter darker purple for the wrapper */
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+      }
+
+      .wrapper header {
+        display: flex;
+        color: #E0CCFF;
+        /* Brighter light purple for text */
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      header h2 {
+        font-size: 1.6rem;
+      }
+
+      header .column {
+        display: flex;
+        align-items: center;
+      }
+
+      header span {
+        font-weight: 500;
+        margin-right: 15px;
+        font-size: 1.19rem;
+      }
+
+      header input {
+        outline: none;
+        border-radius: 30px;
+      }
+
+      .volume-slider input {
+        accent-color: #D8BFD8;
+        /* Thistle purple */
+      }
+
+      .keys-checkbox input {
+        height: 30px;
+        width: 60px;
+        cursor: pointer;
+        appearance: none;
+        position: relative;
+        background: #5A4B8B;
+        /* Brighter Dark Slate Blue */
+      }
+
+      .keys-checkbox input::before {
+        content: "";
+        position: absolute;
+        top: 50%;
+        left: 5px;
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background: #C0D0E8;
+        /* Brighter Light Steel Blue */
+        transform: translateY(-50%);
+        transition: all 0.3s ease;
+      }
+
+      .keys-checkbox input:checked::before {
+        left: 35px;
+        background: #F0E6FF;
+        /* Brighter Lavender */
+      }
+
+      .piano-keys {
+        display: flex;
+        list-style: none;
+        margin-top: 40px;
+      }
+
+      .piano-keys .key {
+        cursor: pointer;
+        user-select: none;
+        position: relative;
+        text-transform: uppercase;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+      }
+
+      .piano-keys .black {
+        z-index: 2;
+        width: 44px;
+        height: 140px;
+        margin: 0 -22px 0 -22px;
+        border-radius: 0 0 5px 5px;
+        background: linear-gradient(#5C1A7D, #8061CC);
+        /* Brighter Indigo to Slate Blue */
+      }
+
+      .piano-keys .black.active {
+        box-shadow: inset -5px -10px 10px rgba(255, 255, 255, 0.1);
+        background: linear-gradient(to bottom, #8061CC, #5A4B8B);
+        /* Brighter Slate Blue to Dark Slate Blue */
+      }
+
+      .piano-keys .white {
+        height: 230px;
+        width: 70px;
+        border-radius: 8px;
+        border: 1px solid #5C1A7D;
+        /* Brighter Indigo */
+        background: linear-gradient(#F4E6FF 96%, #E2CFF8 4%);
+        /* Brighter Light purple to Thistle */
+      }
+
+      .piano-keys .white.active {
+        box-shadow: inset -5px 5px 20px rgba(0, 0, 0, 0.2);
+        background: linear-gradient(to bottom, #E2CFF8 0%, #F4E6FF 100%);
+      }
+
+      .piano-keys .key span {
+        position: absolute;
+        bottom: 20px;
+        width: 100%;
+        color: #D4C6FF;
+        /* Brighter Light purple */
+        font-size: 1.13rem;
+        text-align: center;
+      }
+
+      .piano-keys .key.hide span {
+        display: none;
+      }
+
+      .piano-keys .black span {
+        bottom: 13px;
+        color: #E2CFF8;
+        /* Brighter Thistle */
+      }
+
+      @media screen and (max-width: 815px) {
+        .wrapper {
+          width: 95%;
+          padding: 25px;
+        }
+
+        header {
+          flex-direction: column;
+        }
+
+        header :where(h2, .column) {
+          margin-bottom: 13px;
+        }
+
+        .volume-slider input {
+          max-width: 100px;
+        }
+
+        .piano-keys {
+          margin-top: 20px;
+        }
+
+        .piano-keys .key:where(:nth-child(9), :nth-child(10)) {
+          display: none;
+        }
+
+        .piano-keys .black {
+          height: 100px;
+          width: 40px;
+          margin: 0 -20px 0 -20px;
+        }
+
+        .piano-keys .white {
+          height: 180px;
+          width: 60px;
+        }
+      }
+
+      @media screen and (max-width: 615px) {
+
+        .piano-keys .key:nth-child(13),
+        .piano-keys .key:nth-child(14),
+        .piano-keys .key:nth-child(15),
+        .piano-keys .key:nth-child(16),
+        .piano-keys .key :nth-child(17) {
+          display: none;
+        }
+
+        .piano-keys .white {
+          width: 50px;
+        }
+      }
+    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+    const pianoKeys = document.querySelectorAll(".piano-keys .key"),
+          volumeSlider = document.querySelector(".volume-slider input"),
+          keysCheckbox = document.querySelector(".keys-checkbox input");
+
+    let allKeys = [];
+    let audio = new Audio(); // Create a new Audio object without a source initially
+
+    // Function to play the audio corresponding to the key pressed
+    const playTune = (key) => {
+        // Update audio source dynamically based on the key
+        audio.src = `/static/audio/${key}.wav`; // Correct path
+        audio.play().catch((error) => {
+            console.error('Error playing audio:', error);
+        });
+
+        // Add visual feedback for the key pressed
+        const clickedKey = document.querySelector(`[data-key="${key}"]`);
+        if (clickedKey) {
+            clickedKey.classList.add("active");
+            setTimeout(() => {
+                clickedKey.classList.remove("active");
+            }, 150);
+        }
+    };
+
+    // Add event listeners to each piano key
+    pianoKeys.forEach(key => {
+        allKeys.push(key.dataset.key); // Add the data-key value to the allKeys array
+        key.addEventListener("click", () => playTune(key.dataset.key)); // Play tune on click
+    });
+
+    // Adjust volume based on the slider value
+    volumeSlider.addEventListener("input", () => {
+        audio.volume = volumeSlider.value / 100; // Adjust volume (0 to 1)
+    });
+
+    // Toggle visibility of piano keys
+    keysCheckbox.addEventListener("change", () => {
+        pianoKeys.forEach(key => {
+            key.classList.toggle("hide"); // Toggle the hide class
+        });
+    });
+
+    // Play the corresponding tune when a key is pressed on the keyboard
+    const pressedKey = (e) => {
+        if (allKeys.includes(e.key)) {
+            playTune(e.key); // Play tune based on key pressed
+        }
+    };
+
+    document.addEventListener("keydown", pressedKey); // Add event listener for key presses
+});
+
+    </script>
+    
+    
+       
+    
+  </head>
+  <body>
+    <!-- Background Video -->
+    <video autoplay muted loop id="background-video">
+      <source src="static/videos/pia.mp4" type="video/mp4"> Your browser does not support HTML5 video.
+    </video>
+    <div class="wrapper">
+      <header>
+        <h2>Playable PIANO</h2>
+        <div class="column volume-slider">
+          <span>Volume</span>
+          <input type="range" min="0" max="1" value="0.5" step="any">
+        </div>
+        <div class="column keys-checkbox">
+          <span>Show Keys</span>
+          <input type="checkbox" checked>
+        </div>
+      </header>
+      <ul class="piano-keys">
+        <li class="key white" data-key="a">
+          <span>a</span>
+        </li>
+        <li class="key black" data-key="w">
+          <span>w</span>
+        </li>
+        <li class="key white" data-key="s">
+          <span>s</span>
+        </li>
+        <li class="key black" data-key="e">
+          <span>e</span>
+        </li>
+        <li class="key white" data-key="d">
+          <span>d</span>
+        </li>
+        <li class="key white" data-key="f">
+          <span>f</span>
+        </li>
+        <li class="key black" data-key="t">
+          <span>t</span>
+        </li>
+        <li class="key white" data-key="g">
+          <span>g</span>
+        </li>
+        <li class="key black" data-key="y">
+          <span>y</span>
+        </li>
+        <li class="key white" data-key="h">
+          <span>h</span>
+        </li>
+        <li class="key black" data-key="u">
+          <span>u</span>
+        </li>
+        <li class="key white" data-key="j">
+          <span>j</span>
+        </li>
+        <li class="key white" data-key="k">
+          <span>k</span>
+        </li>
+        <li class="key black" data-key="o">
+          <span>o</span>
+        </li>
+        <li class="key white" data-key="l">
+          <span>l</span>
+        </li>
+        <li class="key black" data-key="p">
+          <span>p</span>
+        </li>
+        <li class="key white" data-key=";">
+          <span>;</span>
+        </li>
+      </ul>
+    </div>
+  </body>
+</html>

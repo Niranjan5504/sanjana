@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+   <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Tic Tac Toe</title>
+      <style>
+         /* Basic styling for the body */
+         body {
+         margin: 0;
+         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+         color: #ffffff;
+         display: flex;
+         flex-direction: column;
+         align-items: center;
+         justify-content: center;
+         height: 100vh;
+         text-align: center;
+         overflow: hidden;
+         }
+         /* Styling for the background video */
+         video {
+         position: fixed;
+         top: 50%;
+         left: 50%;
+         min-width: 100%;
+         min-height: 100%;
+         width: auto;
+         height: auto;
+         z-index: -1;
+         transform: translate(-50%, -50%);
+         filter: brightness(100%);
+         }
+         /* Styling for the main heading */
+         h1 {
+         color:white; /* Neon purple color */
+         margin-bottom: 20px;
+         margin-top: 5px; /* Reduced margin-top */
+         text-shadow: 2px 2px 5px rgb(199, 0, 255); /* Text shadow */
+         font-size: 3.5em; /* Font size */
+         }
+         /* Styling for the container holding the form */
+         .container {
+         background-color: rgb(199, 0, 255); /* Neon purple background */
+         background-image: url('static/image/tic.PNG'); /* Background image */
+         background-size: cover;
+         padding: 30px;
+         border-radius: 10px;
+         box-shadow: 10px 9px 15px white; /* Neon purple shadow */
+         width: 100%;
+         margin-top: 50px;
+         max-width: 400px;
+         height: 300px; /* Height */
+         z-index: 1;
+         display: flex;
+         flex-direction: column;
+         justify-content: center;
+         align-items: center;
+         text-align: center;
+         }
+         /* Styling for the form */
+         form {
+         display: flex;
+         flex-direction: column;
+         align-items: center;
+         width: 100%;
+         }
+         /* Styling for labels */
+         label {
+         font-size: 1.5em;
+         margin-bottom: 20px;
+         margin-top: 10px;
+         text-shadow: 1px 1px 3px white; /* Text shadow */
+         }
+         /* Styling for radio button groups */
+         .radio-group {
+         display: flex;
+         justify-content: center;
+         gap: 10px;
+         margin-bottom: 20px;
+         text-shadow: 1px 1px 3px white; /* Text shadow */
+         }
+         /* Styling for radio buttons */
+         input[type="radio"] {
+         transform: scale(1.5); /* Increase size */
+         cursor: pointer;
+         }
+         /* Styling for submit button */
+         input[type="submit"] {
+         background-color: rgb(199, 0, 255); /* Neon purple */
+         border: none;
+         color: white;
+         padding: 10px 20px;
+         font-size: 1em;
+         cursor: pointer;
+         transition: background-color 0.3s, transform 0.3s;
+         border-radius: 5px;
+         margin-top: 15px;
+         width: 150px;
+         box-shadow: 2px 2px 5px white; /* White shadow */
+         }
+         /* Styling for submit button on hover */
+         input[type="submit"]:hover {
+         background-color: rgb(199, 0, 255); /* Neon purple on hover */
+         transform: scale(1.1); /* Slightly larger on hover */
+         }
+         /* Styling for game board cells */
+         .board {
+         display: grid;
+         grid-template-columns: repeat(3, 1fr);
+         gap: 5px;
+         margin-top: 20px;
+         }
+         /* Styling for individual cells */
+         .cell {
+         width: 200px;
+         height: 100px;
+         padding-top: 100%; /* Maintain square shape */
+         background-color: rgb(199, 0, 255); /* Neon purple background */
+         color: white;
+         font-size: 2em;
+         display: flex;
+         justify-content: center;
+         align-items: center;
+         cursor: pointer;
+         transition: background-color 0.3s;
+         box-shadow: 2px 2px 5px white; /* White shadow */
+         }
+         /* Styling for cells on hover */
+         .cell:hover {
+         background-color:rgb(199, 0, 255); /* Darker color on hover */
+         }
+         /* Styling for winner message */
+         #winner-message {
+         margin-top: 20px;
+         font-size: 1.5em;
+         color: rgb(199, 0, 255); /* Neon purple */
+         text-shadow: 3px 3px 5px white; /* Text shadow */
+         }
+         /* Styling for reset button */
+         #reset-button {
+         margin-top: 20px;
+         background-color: rgb(199, 0, 255); /* Neon purple */
+         border: none;
+         color: white;
+         padding: 10px 20px;
+         font-size: 1em;
+         cursor: pointer;
+         transition: background-color 0.3s;
+         border-radius: 5px;
+         box-shadow: 2px 2px 5px white; /* White shadow */
+         }
+         /* Styling for reset button on hover */
+         #reset-button:hover {
+         background-color: rgb(199, 0, 255); /* Neon purple on hover */
+         }
+         /* Responsive adjustments */
+         @media (max-width: 600px) {
+         h1 {
+         font-size: 2em;
+         }
+         label {
+         font-size: 1.2em;
+         }
+         input[type="submit"], #reset-button {
+         width: 130px; /* Increased width for small screens */
+         padding: 15px 23px; /* Increased padding */
+         font-size: 1.2em; /* Larger font size */
+         left:0;
+         }
+         .container {
+         width: 80%;
+         padding: 20px;
+         margin-top: 50px;
+         background-color: rgb(199, 0, 255); /* Ensure readability */
+         background-size: cover;
+         box-shadow: 0px 0px 10px white; /* White shadow */
+         height: 400px; /* Adjusted height for small screens */
+         }
+         .radio-group {
+         flex-direction: row; /* Align radio buttons in a row */
+         gap: 10px;
+         align-items: center; /* Center align */
+         }
+         input[type="radio"] {
+         transform: scale(1.5); /* Consistent size */
+         }
+         .cell {
+         font-size: 1.5em; /* Smaller font size */
+         }
+         #winner-message {
+         font-size: 1.2em;
+         }
+         #reset-button {
+         border-radius: 10px; /* Rounded corners */
+         }
+         }
+         @media (min-width: 1200px) {
+         .container {
+         width: 400px;
+         padding: 40px;
+         margin-top: 50px;
+         background-color: rgb(199, 0, 255); /* Neon purple */
+         background-size: cover;
+         box-shadow: 0px 0px 20px #bd5ec0; /* Light pink shadow */
+         height: 500px; /* Height for large screens */
+         }
+         h1 {
+         font-size: 3em;
+         }
+         label {
+         font-size: 1.8em;
+         }
+         input[type="submit"], #reset-button {
+         font-size: 1.2em;
+         }
+         .cell {
+         font-size: 2.5em;
+         }
+         #winner-message {
+         font-size: 2em;
+         }
+         }
+      </style>
+   </head>
+   <body>
+      <video autoplay loop muted>
+         <source src="static/videos/purple.mp4" type="video/mp4">
+         Your browser does not support the video tag.
+      </video>
+      <h1>Tic Tac Toe</h1>
+      <div class="container">
+         <form method="POST">
+            <label>Select Your Symbol:</label>
+            <div class="radio-group">
+               <input type="radio" id="x" name="symbol" value="X" required> X
+               <input type="radio" id="o" name="symbol" value="O"> O
+            </div>
+            <label>Select Mode:</label>
+            <div class="radio-group">
+               <input type="radio" id="single" name="mode" value="single" required> Single Player
+               <input type="radio" id="multi" name="mode" value="multi"> Multiplayer
+            </div>
+            <input type="submit" value="Start Game" onclick="game.html">
+         </form>
+      </div>
+   </body>
+</html>

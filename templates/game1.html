@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+   <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Tic Tac Toe</title>
+      <style>
+         body {
+         background-color: #1b1b1b; /* Dark background for contrast */
+         color: #e0e0e0; /* Light text color */
+         font-family: Arial, sans-serif;
+         display: flex;
+         flex-direction: column;
+         align-items: center;
+         justify-content: center;
+         height: 100vh;
+         margin: 0;
+         overflow: hidden;
+         position: relative; /* Required for positioning background video */
+         }
+         /* Background video styling */
+         .background-video {
+         position: absolute;
+         top: 0;
+         left: 0;
+         width: 100%;
+         height: 100%;
+         object-fit: cover;
+         z-index: -1; /* Ensure video is behind other content */
+         }
+         /* Container for the board */
+         .container {
+         background: url('static/images/tic.png') no-repeat center center; /* Background image */
+         background-size: cover; /* Cover the entire container */
+         padding: 20px;
+         border-radius: 15px;
+         box-shadow: 0 0 30px rgba(255, 255, 255, 0.7), 0 0 30px rgba(199, 0, 255, 0.7); /* White and purple box shadow */
+         display: flex;
+         flex-direction: column;
+         align-items: center;
+         justify-content: center;
+         }
+         h1 {
+         color: white; /* Light neon purple */
+         margin-bottom: 20px;
+         text-shadow: 0 0 10px rgba(199, 0, 255, 0.7); /* Neon glow effect */
+         font-size: 4em; /* Large heading */
+         }
+         .board {
+         display: grid;
+         grid-template-columns: repeat(3, 120px); /* Adjust size for more appeal */
+         gap: 10px;
+         margin-top: 20px;
+         box-shadow: 0 0 30px rgba(255, 255, 255, 0.7), 0 0 30px rgba(199, 0, 255, 0.7); /* White and purple box shadow */
+         padding: 10px;
+         background: linear-gradient(145deg, #444, #333); /* Dark gradient background */
+         border-radius: 15px;
+         }
+         .cell {
+         width: 120px;
+         height: 120px;
+         background-color: #222; /* Dark background for cells */
+         color: #c5a6ff; /* Neon purple text */
+         font-size: 3em; /* Larger text size */
+         display: flex;
+         justify-content: center;
+         align-items: center;
+         cursor: pointer;
+         transition: background-color 0.3s, box-shadow 0.3s; /* Smooth transitions */
+         border: 3px solid #c5a6ff; /* Neon purple border */
+         border-radius: 10px; /* Rounded corners */
+         text-shadow: 2px 2px 5px rgba(199, 0, 255, 0.8); /* Neon glow effect on text */
+         }
+         .cell:hover {
+         background-color: #333; /* Slightly lighter background on hover */
+         box-shadow: 0 0 15px rgba(255, 255, 255, 0.7), 0 0 15px rgba(199, 0, 255, 0.8); /* Enhanced glow effect on hover */
+         }
+         #winner-message {
+         margin-top: 20px;
+         font-size: 2.5em;
+         color:white; /* Neon purple */
+         text-shadow: 0 0 10px rgba(199, 0, 255, 0.7); /* Neon glow effect */
+         }
+         #reset-button {
+         margin-top: 20px;
+         background-color: #c5a6ff; /* Neon purple */
+         border: none;
+         color: white;
+         padding: 12px 24px;
+         font-size: 1.5em; /* Slightly larger text size */
+         cursor: pointer;
+         transition: background-color 0.3s;
+         border-radius: 10px; /* Rounded corners */
+         box-shadow: 0 0 15px rgba(255, 255, 255, 0.7), 0 0 15px rgba(199, 0, 255, 0.8); /* Enhanced glow effect */
+         }
+         #reset-button:hover {
+         background-color: #b09aff; /* Lighter neon purple on hover */
+         }
+         /* Responsive styles */
+         @media (max-width: 600px) {
+         .board {
+         grid-template-columns: repeat(3, 90px); /* Adjust size for smaller screens */
+         gap: 5px;
+         }
+         .cell {
+         width: 90px;
+         height: 90px;
+         font-size: 2.5em; /* Smaller text size for smaller screens */
+         }
+         h1 {
+         font-size: 2em; /* Adjust heading size for smaller screens */
+         }
+         }
+      </style>
+   </head>
+   <body>
+      <video class="background-video" autoplay muted loop>
+         <source src="static/videos/purple.mp4" type="video/mp4">
+         Your browser does not support the video tag.
+      </video>
+      <div class="container">
+         <h1>Tic Tac Toe</h1>
+         <div class="board">
+            {% for i in range(9) %}
+            <form method="POST" style="display:inline;">
+               <button class="cell" name="index" value="{{ i }}">{{ board[i] }}</button>
+            </form>
+            {% endfor %}
+         </div>
+         {% if winner %}
+         <div id="winner-message">{{ winner }} wins!</div>
+         <a href="{{ url_for('tic.reset') }}"><button id="reset-button">Play Again</button></a>
+         {% endif %}
+      </div>
+   </body>
+</html>

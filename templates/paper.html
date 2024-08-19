@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+   <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Rock Paper Scissors Game</title>
+      <style>
+         body {
+         font-family: Arial, sans-serif;
+         text-align: center;
+         margin: 0;
+         padding: 0;
+         color: white;
+         overflow: hidden;
+         position: relative;
+         }
+         /* Background video for the whole page */
+         video.bg-video {
+         position: fixed;
+         top: 0;
+         left: 0;
+         width: 100%;
+         height: 100%;
+         object-fit: cover;
+         z-index: -1;
+         }
+         h1 {
+         margin: 20px 0;
+         color: #ffffff;
+         font-size: 3rem;
+         animation: fadeIn 1.5s ease-in-out;
+         }
+         .scoreboard {
+         display: flex;
+         justify-content: space-around;
+         margin: 20px 0;
+         font-size: 1.6rem;
+         }
+         .game-container {
+         display: inline-block;
+         padding: 20px;
+         background: rgba(0, 0, 0, 0.7);
+         border-radius: 15px;
+         box-shadow: 0 0 20px rgba(158, 9, 233, 0.3);
+         background-image: url('static/images/3.png');
+         background-size: cover;
+         margin-top: 50px;
+         z-index: 1;
+         position: relative;
+         animation: slideIn 1.5s ease-in-out;
+         height: auto; /* Allow height to adjust based on content */
+         max-width: 90%; /* Ensure container is responsive */
+         overflow: hidden; /* Prevent scrolling within the container */
+         }
+         .choices {
+         margin: 20px 0;
+         font-size: 1.5rem;
+         }
+         .choices div {
+         margin: 10px;
+         padding: 10px;
+         border-radius: 10px;
+         cursor: pointer;
+         transition: background-color 0.3s, box-shadow 0.3s;
+         display: inline-block;
+         }
+         .choices div:hover {
+         background-color: rgba(158, 9, 233, 0.3);
+         box-shadow: 0 0 15px rgba(255, 255, 255, 0.7);
+         }
+         .choices div.selected {
+         box-shadow: 0 0 15px rgba(158, 9, 233, 0.7);
+         }
+         .result {
+         font-size: 2rem;
+         margin: 20px 0;
+         color: #ffffff;
+         }
+         .score{
+         font-size:18px;
+         }
+         .reset-button1,
+         .game-container button[type="submit"] {
+         margin-top: 20px;
+         padding: 15px 30px;
+         background-image: url('static/image/3.PNG');
+         color: white;
+         border: none;
+         border: 5px solid rgb(220, 213, 220);
+         border-radius: 20%;
+         cursor: pointer;
+         font-size: 1.3rem;
+         transition: background-color 0.3s, transform 0.2s;
+         display: inline-block; /* Ensure button is not blocked */
+         }
+         .reset-button1:hover,
+         .game-container button[type="submit"]:hover {
+         background-image: url('static/image/3.PNG');
+         border: 5px solid rgb(220, 213, 220);
+         transform: scale(1.1);
+         }
+         @keyframes fadeIn {
+         0% {
+         opacity: 0;
+         }
+         100% {
+         opacity: 1;
+         }
+         }
+         @keyframes slideIn {
+         0% {
+         transform: translateY(-50px);
+         opacity: 0;
+         }
+         100% {
+         transform: translateY(0);
+         opacity: 1;
+         }
+         }
+         /* Styles for larger screens */
+         @media (min-width: 1024px) {
+         body {
+         overflow: hidden; /* Prevent scrolling on the entire page */
+         }
+         .game-container {
+         width: 40%; /* Reduce the width for large screens */
+         margin: 30px auto; /* Center the container horizontally */
+         height: auto; /* Adjust height as needed */
+         }
+         }
+         @media (max-width: 600px) {
+         h1 {
+         font-size: 2.5rem; /* Adjust font size for small screens */
+         }
+         .game-container {
+         padding: 15px;
+         margin-top: 20px;
+         width: 80%; /* Ensure container width fits small screens */
+         height: auto; /* Ensure container height fits content */
+         }
+         .choices div {
+         font-size: 1.2rem; /* Adjust font size for small screens */
+         }
+         .scoreboard {
+         flex-direction: column;
+         justify-content: center;
+         font-size: 1.3rem;
+         }
+         .reset-button1,
+         .game-container button[type="submit"] {
+         padding: 10px 20px; /* Adjust button size for small screens */
+         font-size: 1rem;
+         }
+         }
+      </style>
+   </head>
+   <body>
+      <video autoplay muted loop class="bg-video">
+         <source src="{{ url_for('static', filename='videos/2.mp4') }}" type="video/mp4">
+      </video>
+      <h1>Rock Paper Scissors</h1>
+      <div class="scoreboard">
+         <div class="score">Player 1 Score: {{ player1_score }}</div>
+         <div class="score">Player 2 Score: {{ player2_score }}</div>
+      </div>
+      <div class="game-container">
+         <form action="{{ url_for('rock.play') }}" method="post">
+            <h2>Select Mode</h2>
+            <label><input type="radio" name="mode" value="single" checked> Single Player (vs Computer)</label>
+            <label><input type="radio" name="mode" value="multi"> Two Players</label>
+            <div class="choices">
+               <h3>Player 1: Choose Your Move</h3>
+               <div data-choice="rock">Rock</div>
+               <div data-choice="paper">Paper</div>
+               <div data-choice="scissors">Scissors</div>
+            </div>
+            <div class="choices" id="player2_choices" style="display:none;">
+               <h3>Player 2: Choose Your Move</h3>
+               <div data-choice="rock">Rock</div>
+               <div data-choice="paper">Paper</div>
+               <div data-choice="scissors">Scissors</div>
+            </div>
+            <input type="hidden" name="player1_choice" id="player1_choice">
+            <input type="hidden" name="player2_choice" id="player2_choice">
+            <button type="submit">Play</button>
+         </form>
+         {% if result %}
+         <div class="result">
+            {% if result == 'draw' %}
+            It's a Draw!
+            {% else %}
+            {{ result == 'player1' and 'Player 1' or 'Player 2' }} Wins!
+            {% endif %}
+         </div>
+         {% endif %}
+      </div>
+      <form action="{{ url_for('rock.reset') }}" method="get">
+         <button type="submit" class="reset-button1">Reset Scores</button>
+      </form>
+      <script>
+         document.querySelectorAll('input[name="mode"]').forEach(radio => {
+             radio.addEventListener('change', function () {
+                 document.getElementById('player2_choices').style.display = this.value === 'multi' ? 'block' : 'none';
+             });
+         });
+         
+         document.querySelectorAll('.choices div').forEach(div => {
+             div.addEventListener('click', function () {
+                 const choice = this.dataset.choice;
+                 const parent = this.closest('.choices');
+                 if (parent.id === 'player2_choices') {
+                     document.getElementById('player2_choice').value = choice;
+                 } else {
+                     document.getElementById('player1_choice').value = choice;
+                 }
+         
+                 parent.querySelectorAll('div').forEach(sibling => sibling.classList.remove('selected'));
+                 this.classList.add('selected');
+             });
+         });
+      </script>
+   </body>
+</html>

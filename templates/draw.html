@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quick Draw - Single Player</title>
+    <style>
+        body {
+            font-family: 'Courier New', Courier, monospace;
+            background-color: black;
+            color: white;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        .background-video {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: -1;
+            filter: brightness(0.7);
+        }
+
+        .game-container {
+            background-color: rgba(110, 66, 142, 0.9); /* Purple theme */
+            border-radius: 15px;
+            padding: 40px;
+            width: 60%;
+            max-width: 400px;
+            height: auto;
+            box-shadow: 0 0 20px #800080;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            margin: 20px 0; /* Space between containers */
+        }
+
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            color: #f0f0f0;
+            text-shadow: 3px 3px 7px #ff00ff;
+        }
+
+        #prompt, #reaction-time, #multiplayer-link {
+            font-size: 1.5em;
+            text-shadow: 2px 2px 5px #ff00ff;
+        }
+
+        #reaction-time {
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        #draw-button, #multiplayer-button {
+            font-size: 1.2em;
+            padding: 10px 20px;
+            background-color: #800080;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            box-shadow: 0 0 15px #ff00ff;
+            transition: all 0.3s ease;
+            margin: 10px auto; /* Center align buttons */
+            width: 80%; /* Reduce button width */
+        }
+
+        #draw-button:hover, #multiplayer-button:hover {
+            background-color: #ff00ff;
+            box-shadow: 0 0 20px #800080;
+        }
+
+        #draw-button:disabled {
+            background-color: #555;
+            box-shadow: none;
+            cursor: not-allowed;
+        }
+
+        #multiplayer-link {
+            display: inline-block;
+            margin-top: 20px;
+            color: #ff00ff;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        #multiplayer-link:hover {
+            color: #800080;
+        }
+
+        @media (max-width: 600px) {
+            .game-container {
+                width: 75%;
+                height: auto;
+            }
+
+            h1 {
+                font-size: 2em;
+            }
+
+            #prompt, #reaction-time, #multiplayer-link {
+                font-size: 1.2em;
+            }
+
+            #draw-button, #multiplayer-button {
+                font-size: 1.2em;
+                padding: 8px 16px;
+                width: 80%; /* Adjust button width on small screens */
+            }
+        }
+    </style>
+</head>
+<body>
+    <video autoplay muted loop class="background-video">
+        <source src="static/videos/draw.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+
+    <div class="game-container">
+        <h1>Quick Draw!</h1>
+        <div id="prompt">Get Ready...</div>
+        <div id="reaction-time"></div>
+        <button id="draw-button" disabled>Click When Prompted!</button>
+        <button id="multiplayer-button" onclick="window.location.href='/multiplayer'">Play Multiplayer Mode</button>
+    </div>
+
+    <script>
+        let promptTime;
+        const drawButton = document.getElementById('draw-button');
+        const promptDiv = document.getElementById('prompt');
+        const reactionTimeDiv = document.getElementById('reaction-time');
+
+        // Function to start the game
+        function startGame() {
+            promptDiv.textContent = "Get Ready...";
+            reactionTimeDiv.style.display = 'none';
+            drawButton.disabled = true;
+
+            const randomDelay = Math.random() * 3000 + 2000; // Random delay between 2 and 5 seconds
+            setTimeout(() => {
+                promptDiv.textContent = "Draw!";
+                promptTime = Date.now();
+                drawButton.disabled = false;
+            }, randomDelay);
+        }
+
+        // Event listener for draw button
+        drawButton.addEventListener('click', () => {
+            const reactionTime = (Date.now() - promptTime) / 1000;
+            reactionTimeDiv.textContent = `Your reaction time: ${reactionTime} seconds`;
+            reactionTimeDiv.style.display = 'block';
+            drawButton.disabled = true;
+        });
+
+        // Start the game after a short delay
+        setTimeout(startGame, 1000);
+    </script>
+</body>
+</html>
